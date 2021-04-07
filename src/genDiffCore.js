@@ -1,13 +1,6 @@
 import _ from 'lodash';
-import * as fs from 'fs';
 import path from 'path';
-
-const resolveFile = (rawPath, curDir) => {
-  const filepath = path.resolve(curDir, rawPath);
-  const json = fs.readFileSync(filepath, 'utf8');
-  const parsedJson = JSON.parse(json);
-  return parsedJson;
-};
+import { yamlParser, jsonParser } from './parsers.js';
 
 const buildDiff = (obj1, obj2) => {
   const keys1 = Object.keys(obj1);
@@ -37,10 +30,24 @@ const buildDiff = (obj1, obj2) => {
   return wrap(result);
 };
 
+const allocator = (filepath, curDir) => {
+  const ext = path.extname(filepath);
+  const absolutePath = path.resolve(curDir, filepath);
+  switch (ext) {
+    case '.yaml':
+    case '.yml':
+      return yamlParser(absolutePath);
+    case '.json':
+      return jsonParser(absolutePath);
+    default:
+      throw new Error('Unexpected file extension');
+  }
+};
+
 const genDiff = (filepath1, filepath2) => {
   const curDir = process.cwd();
-  const obj1 = resolveFile(filepath1, curDir);
-  const obj2 = resolveFile(filepath2, curDir);
+  const obj1 = allocator(filepath1, curDir);
+  const obj2 = allocator(filepath2, curDir);
   return buildDiff(obj1, obj2);
 };
 
