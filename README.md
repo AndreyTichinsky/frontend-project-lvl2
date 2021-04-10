@@ -7,3 +7,4 @@
 [JSON example](https://asciinema.org/a/fnBIoWkKCsVBsePu446oXYCiz)  
 [YAML example](https://asciinema.org/a/XVhOZqROfuPB8SBFsQ6hzPeuO)  
 [Deep diff example](https://asciinema.org/a/35iiRRda23MvVIQdwZ5eqQWSY)  
+[Plain diff example](https://asciinema.org/a/P33VskfAt01BCXGMgVQ80RzGL)  
