@@ -1,6 +1,11 @@
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
-import { correctDiff1to2, correctDiff2to1, f1Diff } from '../__fixtures__/data.js';
+import {
+  correctDiff1to2,
+  correctDiff2to1,
+  f1Diff,
+  plainDiff,
+} from '../__fixtures__/data.js';
 
 import genDiff from '../src/genDiffCore.js';
 
@@ -34,5 +39,14 @@ describe('genDiffCore yaml testing', () => {
   });
   test('compare same yaml', () => {
     expect(genDiff(yamlPath1, yamlPath1)).toEqual(f1Diff);
+  });
+});
+
+describe('genDiffCore with formatters', () => {
+  test('compare first yaml to second with plain formatter', () => {
+    expect(genDiff(yamlPath1, yamlPath2, 'plain')).toEqual(plainDiff);
+  });
+  test('compare first json to second with plain formatter', () => {
+    expect(genDiff(jsonPath1, jsonPath2, 'plain')).toEqual(plainDiff);
   });
 });
