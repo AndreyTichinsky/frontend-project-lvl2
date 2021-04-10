@@ -6,7 +6,8 @@ import {
   f1Diff,
   plainDiff,
 } from '../__fixtures__/data.js';
-import { jsonParser } from '../src/parsers.js';
+import { jsonParse } from '../src/parsers.js';
+import readFile from '../src/readFile.js';
 
 import genDiff from '../src/genDiffCore.js';
 
@@ -18,7 +19,9 @@ const jsonPath1 = getFixturePath('f1.json');
 const jsonPath2 = getFixturePath('f2.json');
 const yamlPath1 = getFixturePath('f1.yaml');
 const yamlPath2 = getFixturePath('f2.yaml');
-const jsonDiff = JSON.stringify(jsonParser(getFixturePath('jsonDiff.json')));
+const jsonDiff = JSON.stringify(
+  jsonParse(readFile(getFixturePath('jsonDiff.json'))),
+);
 
 describe('genDiffCore json testing', () => {
   test('compare first json to second', () => {
