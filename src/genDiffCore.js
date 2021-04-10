@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import fp from 'lodash/fp';
 import path from 'path';
 import { yamlParse, jsonParse } from './parsers.js';
 import getFormatter from './formatters/index.js';
@@ -6,15 +7,17 @@ import readFile from './readFile.js';
 
 const stringify = (object) => {
   const traverse = (obj) => {
-    const keys = Object.keys(obj).sort();
-    return keys.reduce((acc, cur) => {
-      acc.push({
-        key: cur,
-        value: typeof obj[cur] === 'object' ? traverse(obj[cur]) : obj[cur],
-        type: 'unchanged',
-      });
-      return acc;
-    }, []);
+    const keys = fp.sortBy(_.identity)(Object.keys(obj));
+    return keys.reduce(
+      (acc, cur) => _.concat(acc, [
+        {
+          key: cur,
+          value: typeof obj[cur] === 'object' ? traverse(obj[cur]) : obj[cur],
+          type: 'unchanged',
+        },
+      ]).flat(Infinity),
+      [],
+    );
   };
   return traverse(object);
 };
@@ -25,7 +28,7 @@ const buildDiff = (obj1, obj2, formatter) => {
   const traverse = (objA, objB) => {
     const keys1 = Object.keys(objA);
     const keys2 = Object.keys(objB);
-    const union = _.union(keys1, keys2).sort();
+    const union = fp.sortBy(_.identity)(_.union(keys1, keys2));
     const intersection = _.intersection(keys1, keys2);
     const diff1 = _.difference(keys1, intersection);
     const diff2 = _.difference(keys2, intersection);

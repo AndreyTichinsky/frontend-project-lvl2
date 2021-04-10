@@ -52,6 +52,7 @@ const stylish = (ast) => {
         });
         break;
       default:
+        throw new Error(`Unexpected type: ${type}`);
     }
     return temp;
   }, '');
