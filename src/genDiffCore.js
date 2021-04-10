@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import { yamlParser, jsonParser } from './parsers.js';
-import stylish from './formaters.js';
+import getFormatter from './formatters/index.js';
 
 const stringify = (object) => {
   const traverse = (obj) => {
@@ -26,7 +26,7 @@ const stringify = (object) => {
   return traverse(object);
 };
 
-const buildDiff = (obj1, obj2, formater) => {
+const buildDiff = (obj1, obj2, formatter) => {
   const traverse = (objA, objB) => {
     const keys1 = Object.keys(objA);
     const keys2 = Object.keys(objB);
@@ -50,7 +50,7 @@ const buildDiff = (obj1, obj2, formater) => {
             key: cur,
             valueBefore: isObj1 ? stringify(objA[cur]) : objA[cur],
             valueAfter: isObj2 ? stringify(objB[cur]) : objB[cur],
-            type: 'changed',
+            type: 'updated',
           });
         } else if (objA[cur] === objB[cur]) {
           temp.push({
@@ -63,14 +63,14 @@ const buildDiff = (obj1, obj2, formater) => {
             key: cur,
             valueBefore: objA[cur],
             valueAfter: objB[cur],
-            type: 'changed',
+            type: 'updated',
           });
         }
       } else if (diff1.includes(cur)) {
         temp.push({
           key: cur,
           value: isObj1 ? stringify(objA[cur]) : objA[cur],
-          type: 'deleted',
+          type: 'removed',
         });
       } else if (diff2.includes(cur)) {
         temp.push({
@@ -84,8 +84,9 @@ const buildDiff = (obj1, obj2, formater) => {
     return result;
   };
   const finalAST = traverse(obj1, obj2);
+  const formatterFunc = getFormatter(formatter);
 
-  return formater(finalAST);
+  return formatterFunc(finalAST);
 };
 
 const allocator = (filepath, curDir) => {
@@ -102,11 +103,11 @@ const allocator = (filepath, curDir) => {
   }
 };
 
-const genDiff = (filepath1, filepath2, formater = stylish) => {
+const genDiff = (filepath1, filepath2, formatter = 'stylish') => {
   const curDir = process.cwd();
   const obj1 = allocator(filepath1, curDir);
   const obj2 = allocator(filepath2, curDir);
-  return buildDiff(obj1, obj2, formater);
+  return buildDiff(obj1, obj2, formatter);
 };
 
 export default genDiff;
