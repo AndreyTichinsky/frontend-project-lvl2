@@ -19,15 +19,19 @@ const stringify = (object) => {
   return traverse(object);
 };
 
+const isObj = (obj) => typeof obj === 'object' && obj != null;
+
 const buildDiff = (obj1, obj2, formatter) => {
   const traverse = (objA, objB) => {
     const keys1 = Object.keys(objA);
     const keys2 = Object.keys(objB);
     const union = _.union(keys1, keys2).sort();
     const intersection = _.intersection(keys1, keys2);
+    const diff1 = _.difference(keys1, intersection);
+    const diff2 = _.difference(keys2, intersection);
     const result = union.reduce((acc, cur) => {
-      const isObj1 = typeof objA[cur] === 'object' && objA[cur] != null;
-      const isObj2 = typeof objB[cur] === 'object' && objB[cur] != null;
+      const isObj1 = isObj(objA[cur]);
+      const isObj2 = isObj(objB[cur]);
       if (intersection.includes(cur)) {
         if (isObj1 && isObj2) {
           acc.push({
@@ -56,13 +60,13 @@ const buildDiff = (obj1, obj2, formatter) => {
             type: 'updated',
           });
         }
-      } else if (_.difference(keys1, intersection).includes(cur)) {
+      } else if (diff1.includes(cur)) {
         acc.push({
           key: cur,
           value: isObj1 ? stringify(objA[cur]) : objA[cur],
           type: 'removed',
         });
-      } else if (_.difference(keys2, intersection).includes(cur)) {
+      } else if (diff2.includes(cur)) {
         acc.push({
           key: cur,
           value: isObj2 ? stringify(objB[cur]) : objB[cur],
