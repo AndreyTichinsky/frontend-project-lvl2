@@ -5,27 +5,27 @@ const plain = (ast) => {
   const traverse = (tree, path) => tree.reduce((acc, {
     key, value, type, valueBefore, valueAfter,
   }) => {
-    let temp = acc;
     const updPath = `${path}${path ? '.' : ''}${key}`;
     switch (type) {
       case 'removed':
-        temp += `\nProperty '${updPath}' was removed`;
+        acc.push(`Property '${updPath}' was removed`);
         break;
       case 'added':
-        temp += `\nProperty '${updPath}' was added with value: ${checkComplex(value)}`;
+        acc.push(`Property '${updPath}' was added with value: ${checkComplex(value)}`);
         break;
       case 'updated':
-        temp += `\nProperty '${updPath}' was updated. From ${checkComplex(
+        acc.push(`Property '${updPath}' was updated. From ${checkComplex(
           valueBefore,
-        )} to ${checkComplex(valueAfter)}`;
+        )} to ${checkComplex(valueAfter)}`);
         break;
       default:
     }
     if (Array.isArray(value)) {
-      temp += traverse(value, updPath);
+      acc.push(traverse(value, updPath));
     }
-    return temp;
-  }, '');
-  return traverse(ast, basePath);
+    return acc;
+  }, []);
+  const result = traverse(ast, basePath);
+  return result.flat(Infinity).join('\n');
 };
 export default plain;
