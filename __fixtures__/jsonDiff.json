@@ -1,0 +1,113 @@
+[{
+  "key": "common",
+  "value": [{
+    "key": "follow",
+    "value": false,
+    "type": "added"
+  }, {
+    "key": "setting1",
+    "value": "Value 1",
+    "type": "unchanged"
+  }, {
+    "key": "setting2",
+    "value": 200,
+    "type": "removed"
+  }, {
+    "key": "setting3",
+    "valueBefore": true,
+    "valueAfter": null,
+    "type": "updated"
+  }, {
+    "key": "setting4",
+    "value": "blah blah",
+    "type": "added"
+  }, {
+    "key": "setting5",
+    "value": [{
+      "key": "key5",
+      "value": "value5",
+      "type": "unchanged"
+    }],
+    "type": "added"
+  }, {
+    "key": "setting6",
+    "value": [{
+      "key": "doge",
+      "value": [{
+        "key": "wow",
+        "valueBefore": "",
+        "valueAfter": "so much",
+        "type": "updated"
+      }],
+      "type": "unchanged"
+    }, {
+      "key": "key",
+      "value": "value",
+      "type": "unchanged"
+    }, {
+      "key": "ops",
+      "value": "vops",
+      "type": "added"
+    }],
+    "type": "unchanged"
+  }],
+  "type": "unchanged"
+}, {
+  "key": "group1",
+  "value": [{
+    "key": "baz",
+    "valueBefore": "bas",
+    "valueAfter": "bars",
+    "type": "updated"
+  }, {
+    "key": "foo",
+    "value": "bar",
+    "type": "unchanged"
+  }, {
+    "key": "nest",
+    "valueBefore": [{
+      "key": "key",
+      "value": "value",
+      "type": "unchanged"
+    }],
+    "valueAfter": "str",
+    "type": "updated"
+  }],
+  "type": "unchanged"
+}, {
+  "key": "group2",
+  "value": [{
+    "key": "abc",
+    "value": 12345,
+    "type": "unchanged"
+  }, {
+    "key": "deep",
+    "value": [{
+      "key": "id",
+      "value": 45,
+      "type": "unchanged"
+    }],
+    "type": "unchanged"
+  }],
+  "type": "removed"
+}, {
+  "key": "group3",
+  "value": [{
+    "key": "deep",
+    "value": [{
+      "key": "id",
+      "value": [{
+        "key": "number",
+        "value": 45,
+        "type": "unchanged"
+      }],
+      "type": "unchanged"
+    }],
+    "type": "unchanged"
+  }, {
+    "key": "fee",
+    "value": 100500,
+    "type": "unchanged"
+  }],
+  "type": "added"
+}]
