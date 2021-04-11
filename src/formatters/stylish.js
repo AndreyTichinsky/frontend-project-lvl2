@@ -13,13 +13,47 @@ const concatStr = ({
   ind,
 });
 
+const buildString = ({
+  type,
+  valueBefore,
+  valueAfter,
+  baseStr,
+  ...defaultConfig
+}) => {
+  switch (type) {
+    case 'unchanged':
+      return baseStr + concatStr({ ...defaultConfig, sym: ' ' });
+    case 'removed':
+      return baseStr + concatStr({ ...defaultConfig, sym: '-' });
+    case 'added':
+      return baseStr + concatStr({ ...defaultConfig, sym: '+' });
+    case 'updated':
+      return (
+        baseStr
+        + concatStr({
+          ...defaultConfig,
+          ifArr: Array.isArray(valueBefore),
+          value: valueBefore,
+          sym: '-',
+        })
+        + concatStr({
+          ...defaultConfig,
+          ifArr: Array.isArray(valueAfter),
+          value: valueAfter,
+          sym: '+',
+        })
+      );
+    default:
+      throw new Error(`Unexpected type: ${type}`);
+  }
+};
+
 const stylish = (ast) => {
   const indent = 0;
   const traverse = (tree, oldInd) => tree.reduce((acc, {
     key, value, type, valueBefore, valueAfter,
   }) => {
     const newInd = oldInd + 4;
-    let temp = acc;
     const defaultConfig = {
       key,
       ifArr: Array.isArray(value),
@@ -27,34 +61,11 @@ const stylish = (ast) => {
       ind: newInd,
       traverse,
     };
-    switch (type) {
-      case 'unchanged':
-        temp += concatStr({ ...defaultConfig, sym: ' ' });
-        break;
-      case 'removed':
-        temp += concatStr({ ...defaultConfig, sym: '-' });
-        break;
-      case 'added':
-        temp += concatStr({ ...defaultConfig, sym: '+' });
-        break;
-      case 'updated':
-        temp += concatStr({
-          ...defaultConfig,
-          ifArr: Array.isArray(valueBefore),
-          value: valueBefore,
-          sym: '-',
-        });
-        temp += concatStr({
-          ...defaultConfig,
-          ifArr: Array.isArray(valueAfter),
-          value: valueAfter,
-          sym: '+',
-        });
-        break;
-      default:
-        throw new Error(`Unexpected type: ${type}`);
-    }
-    return temp;
+    const accStr = buildString({
+      ...defaultConfig, type, valueBefore, valueAfter, baseStr: acc,
+    });
+
+    return accStr;
   }, '');
   return wrap(traverse(ast, indent), indent);
 };

@@ -1,5 +1,5 @@
+import fp from 'lodash/fp.js';
 import _ from 'lodash';
-import fp from 'lodash/fp';
 import path from 'path';
 import { yamlParse, jsonParse } from './parsers.js';
 import getFormatter from './formatters/index.js';
