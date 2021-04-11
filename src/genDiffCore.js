@@ -37,40 +37,39 @@ const buildDiff = (obj1, obj2, formatter) => {
       const isObj2 = isObj(objB[cur]);
       if (intersection.includes(cur)) {
         if (isObj1 && isObj2) {
-          acc.push({
+          return _.concat(acc, {
             key: cur,
             value: traverse(objA[cur], objB[cur]),
             type: 'unchanged',
           });
-        } else if (isObj1 || isObj2) {
-          acc.push({
+        } if (isObj1 || isObj2) {
+          return _.concat(acc, {
             key: cur,
             valueBefore: isObj1 ? stringify(objA[cur]) : objA[cur],
             valueAfter: isObj2 ? stringify(objB[cur]) : objB[cur],
             type: 'updated',
           });
-        } else if (objA[cur] === objB[cur]) {
-          acc.push({
+        } if (objA[cur] === objB[cur]) {
+          return _.concat(acc, {
             key: cur,
             value: objA[cur],
             type: 'unchanged',
           });
-        } else {
-          acc.push({
-            key: cur,
-            valueBefore: objA[cur],
-            valueAfter: objB[cur],
-            type: 'updated',
-          });
         }
-      } else if (diff1.includes(cur)) {
-        acc.push({
+        return _.concat(acc, {
+          key: cur,
+          valueBefore: objA[cur],
+          valueAfter: objB[cur],
+          type: 'updated',
+        });
+      } if (diff1.includes(cur)) {
+        return _.concat(acc, {
           key: cur,
           value: isObj1 ? stringify(objA[cur]) : objA[cur],
           type: 'removed',
         });
-      } else if (diff2.includes(cur)) {
-        acc.push({
+      } if (diff2.includes(cur)) {
+        return _.concat(acc, {
           key: cur,
           value: isObj2 ? stringify(objB[cur]) : objB[cur],
           type: 'added',
