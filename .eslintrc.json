@@ -18,6 +18,7 @@
     "fp"
   ],
   "rules": {
+    "fp/no-rest-parameters": "error",
     "fp/no-let": "error",
     "fp/no-mutating-assign": "error",
     "fp/no-mutating-methods": "error",

@@ -18,8 +18,15 @@ const buildString = ({
   valueBefore,
   valueAfter,
   baseStr,
-  ...defaultConfig
+  key,
+  ifArr,
+  value,
+  ind,
+  traverse,
 }) => {
+  const defaultConfig = {
+    key, ifArr, value, ind, traverse,
+  };
   switch (type) {
     case 'unchanged':
       return baseStr + concatStr({ ...defaultConfig, sym: ' ' });
