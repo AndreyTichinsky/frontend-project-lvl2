@@ -112,8 +112,7 @@ export const f1Diff = `{
         }
     }
 }`;
-export const plainDiff = `
-Property 'common.follow' was added with value: false
+export const plainDiff = `Property 'common.follow' was added with value: false
 Property 'common.setting2' was removed
 Property 'common.setting3' was updated. From true to null
 Property 'common.setting4' was added with value: 'blah blah'

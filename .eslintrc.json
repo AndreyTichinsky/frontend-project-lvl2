@@ -6,13 +6,25 @@
     "jest": true
   },
   "extends": [
-    "airbnb-base"
+    "airbnb-base",
+    "plugin:jest/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 12,
     "sourceType": "module"
   },
+  "plugins": [
+    "jest", 
+    "fp"
+  ],
   "rules": {
+    "fp/no-rest-parameters": "error",
+    "fp/no-let": "error",
+    "fp/no-mutating-assign": "error",
+    "fp/no-mutating-methods": "error",
+    "fp/no-mutation": "error",
+    "no-var": "error",
+    "import/prefer-default-export": "off",
     "no-console": "off",
     "no-underscore-dangle": [
       2,

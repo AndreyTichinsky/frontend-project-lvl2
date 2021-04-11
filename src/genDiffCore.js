@@ -1,3 +1,4 @@
+import fp from 'lodash/fp.js';
 import _ from 'lodash';
 import path from 'path';
 import { yamlParse, jsonParse } from './parsers.js';
@@ -6,64 +7,69 @@ import readFile from './readFile.js';
 
 const stringify = (object) => {
   const traverse = (obj) => {
-    const keys = Object.keys(obj).sort();
-    return keys.reduce((acc, cur) => {
-      acc.push({
-        key: cur,
-        value: typeof obj[cur] === 'object' ? traverse(obj[cur]) : obj[cur],
-        type: 'unchanged',
-      });
-      return acc;
-    }, []);
+    const keys = fp.sortBy(_.identity)(Object.keys(obj));
+    return keys.reduce(
+      (acc, cur) => _.concat(acc, [
+        {
+          key: cur,
+          value: typeof obj[cur] === 'object' ? traverse(obj[cur]) : obj[cur],
+          type: 'unchanged',
+        },
+      ]).flat(Infinity),
+      [],
+    );
   };
   return traverse(object);
 };
+
+const isObj = (obj) => typeof obj === 'object' && obj != null;
 
 const buildDiff = (obj1, obj2, formatter) => {
   const traverse = (objA, objB) => {
     const keys1 = Object.keys(objA);
     const keys2 = Object.keys(objB);
-    const union = _.union(keys1, keys2).sort();
+    const union = fp.sortBy(_.identity)(_.union(keys1, keys2));
     const intersection = _.intersection(keys1, keys2);
+    const diff1 = _.difference(keys1, intersection);
+    const diff2 = _.difference(keys2, intersection);
     const result = union.reduce((acc, cur) => {
-      const isObj1 = typeof objA[cur] === 'object' && objA[cur] != null;
-      const isObj2 = typeof objB[cur] === 'object' && objB[cur] != null;
+      const isObj1 = isObj(objA[cur]);
+      const isObj2 = isObj(objB[cur]);
       if (intersection.includes(cur)) {
         if (isObj1 && isObj2) {
-          acc.push({
+          return _.concat(acc, {
             key: cur,
             value: traverse(objA[cur], objB[cur]),
             type: 'unchanged',
           });
-        } else if (isObj1 || isObj2) {
-          acc.push({
+        } if (isObj1 || isObj2) {
+          return _.concat(acc, {
             key: cur,
             valueBefore: isObj1 ? stringify(objA[cur]) : objA[cur],
             valueAfter: isObj2 ? stringify(objB[cur]) : objB[cur],
             type: 'updated',
           });
-        } else if (objA[cur] === objB[cur]) {
-          acc.push({
+        } if (objA[cur] === objB[cur]) {
+          return _.concat(acc, {
             key: cur,
             value: objA[cur],
             type: 'unchanged',
           });
-        } else {
-          acc.push({
-            key: cur,
-            valueBefore: objA[cur],
-            valueAfter: objB[cur],
-            type: 'updated',
-          });
         }
-      } else if (_.difference(keys1, intersection).includes(cur)) {
-        acc.push({
+        return _.concat(acc, {
+          key: cur,
+          valueBefore: objA[cur],
+          valueAfter: objB[cur],
+          type: 'updated',
+        });
+      } if (diff1.includes(cur)) {
+        return _.concat(acc, {
           key: cur,
           value: isObj1 ? stringify(objA[cur]) : objA[cur],
           type: 'removed',
         });
-      } else if (_.difference(keys2, intersection).includes(cur)) {
-        acc.push({
+      } if (diff2.includes(cur)) {
+        return _.concat(acc, {
           key: cur,
           value: isObj2 ? stringify(objB[cur]) : objB[cur],
           type: 'added',
